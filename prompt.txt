@@ -1,0 +1,230 @@
+. What is the purpose of this program?
+
+Answer:
+This program is a simple 2D graphics editor using a character array. It can draw rectangles, lines, triangles, circles, delete objects, and display the picture using * and _.
+
+2. Why is a 2D array used?
+
+Answer:
+A 2D array represents rows and columns of the drawing area (canvas). Each element stores a character that represents a pixel.
+
+char canvas[ROWS][COLS];
+3. What does ROWS and COLS mean?
+
+Answer:
+
+#define ROWS 20
+#define COLS 40
+
+They define the size of the canvas.
+
+20 rows
+40 columns
+4. What is the purpose of initCanvas()?
+
+Answer:
+It initializes the canvas by filling every position with _.
+
+canvas[i][j]='_';
+
+This creates an empty drawing area.
+
+5. Why are functions used?
+
+Answer:
+Functions make the program modular and reusable.
+
+Examples:
+
+drawRectangle()
+drawLine()
+drawCircle()
+drawTriangle()
+displayCanvas()
+6. What is the purpose of displayCanvas()?
+
+Answer:
+It prints the entire canvas on the screen.
+
+printf("%c",canvas[i][j]);
+7. How is a rectangle drawn?
+
+Answer:
+Nested loops fill a rectangular area with *.
+
+for(i=x;i<x+h;i++)
+    for(j=y;j<y+w;j++)
+        canvas[i][j]='*';
+8. What are x and y coordinates?
+
+Answer:
+
+x → row number
+y → column number
+
+Example:
+
+(0,0) = top-left corner
+9. How is a line drawn?
+
+Answer:
+Only horizontal and vertical lines are supported.
+
+Horizontal:
+
+x1 == x2
+
+Vertical:
+
+y1 == y2
+10. Why doesn't this program draw diagonal lines?
+
+Answer:
+The logic only checks:
+
+if(x1==x2)
+else if(y1==y2)
+
+So diagonal coordinates are not handled.
+
+11. How is a triangle drawn?
+
+Answer:
+Three sides are drawn:
+
+canvas[x+i][y]='*';
+canvas[x+size-1][y+i]='*';
+canvas[x+i][y+i]='*';
+Left side
+Bottom side
+Diagonal side
+12. How is a circle drawn?
+
+Answer:
+Using the circle equation:
+
+(x−cx)
+2
++(y−cy)
+2
+≤r
+2
+
+Code:
+
+(i-cx)*(i-cx)+(j-cy)*(j-cy)<=r*r
+13. Why is <= used in circle logic?
+
+Answer:
+It fills all points inside the circle and on the boundary.
+
+14. What is radius?
+
+Answer:
+Radius is the distance from the center of the circle to its boundary.
+
+15. What does deleteObject() do?
+
+Answer:
+It replaces * with _ in a specified rectangular area.
+
+canvas[i][j]='_';
+16. What is the role of switch statement?
+
+Answer:
+It performs different operations based on the user's choice.
+
+switch(choice)
+17. Why is break used?
+
+Answer:
+To stop execution of the current case.
+
+Without break, control goes to the next case.
+
+18. Why is a do-while loop used?
+
+Answer:
+To repeatedly show the menu until the user chooses Exit.
+
+do
+{
+   ...
+}while(choice!=7);
+19. What is the exit condition?
+
+Answer:
+
+choice != 7
+
+Program exits when user enters 7.
+
+20. Why are boundary checks used?
+
+Answer:
+To prevent accessing memory outside the canvas.
+
+if(i<ROWS && j<COLS)
+21. What happens if coordinates exceed canvas size?
+
+Answer:
+Without boundary checks, the program may crash or produce incorrect output.
+
+22. What are the limitations of this program?
+
+Answer:
+
+No diagonal line support.
+Circle is filled, not hollow.
+Shapes cannot be individually selected.
+Delete works only on rectangular areas.
+No color support.
+23. How can modification of shapes be implemented?
+
+Answer:
+
+Delete the old shape.
+Take new coordinates.
+Draw the shape again.
+24. What is the time complexity of displaying the canvas?
+
+Answer:
+
+O(ROWS × COLS)
+
+Because every cell is printed once.
+
+25. Why are nested loops used frequently?
+
+Answer:
+Shapes occupy multiple rows and columns, so nested loops are needed to visit each cell.
+
+26. Give a sample input for drawing a rectangle.
+
+Answer:
+
+Choice: 1
+Enter x y width height:
+2 5 8 4
+27. Give a sample input for drawing a circle.
+
+Answer:
+
+Choice: 4
+Enter centerX centerY radius:
+10 20 5
+28. What symbols are used for drawing?
+
+Answer:
+
+'*'  -> Object
+'_'  -> Empty space
+29. Why is char data type used?
+
+Answer:
+Because the canvas stores characters (* and _).
+
+30. Can multiple shapes be drawn together?
+
+Answer:
+Yes. Every new shape is added to the existing canvas until deleted or the program ends.
