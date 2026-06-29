@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartik News | Live Updates</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #1a1a1a;
+        }
+
+        /* Top Navbar */
+        nav {
+            background-color: #0f172a;
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #38bdf8;
+        }
+
+        .live-indicator {
+            background: #ef4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Hero Header */
+        header {
+            background-color: #1e293b;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Main Content Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* News Grid Layout */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .news-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .news-date {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .news-title {
+            font-size: 1.2rem;
+            color: #0f172a;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .news-snippet {
+            font-size: 0.95rem;
+            color: #475569;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .read-more {
+            display: inline-block;
+            background: #0f172a;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .read-more:hover {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+        /* Loader */
+        #loading {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #64748b;
+            padding: 50px 0;
+        }
+
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Kartik<span>News</span></div>
+            <div class="live-indicator">● LIVE</div>
+        </div>
+    </nav>
+
+    <!-- Main Header -->
+    <header>
+        <h1>Global Tech & Business Headlines</h1>
+        <p style="color: #94a3b8; margin-top: 5px;">Real-time dynamic feed integration</p>
+    </header>
+
+    <!-- Content Area -->
+    <div class="container">
+        <div id="loading">Fetching current headlines from live feeds...</div>
+        <div class="news-grid" id="news-container"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Kartik News Network. Dynamic content updates on refresh.</p>
+    </footer>
+
+    <!-- Logic to fetch live RSS headlines directly inside browser -->
+    <script>
+        const feedUrl = encodeURIComponent('https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml');
+        // Public API converter to change open RSS files into readable browser JSON
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`;
+
+        async function fetchLiveNews() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                const loadingDiv = document.getElementById('loading');
+                loadingDiv.style.display = 'none';
+
+                const container = document.getElementById('news-container');
+                
+                if (data.status === 'ok') {
+                    data.items.forEach(item => {
+                        // Clean up text snippet from HTML markup tags
+                        const cleanSnippet = item.description.replace(/<\/?[^>]+(>|$)/g, "");
+                        
+                        // Parse publish date formatting nicely
+                        const pubDate = new Date(item.pubDate).toLocaleDateString('en-US', {
+                            wordSpacing: 'normal', year: 'numeric', month: 'long', day: 'numeric'
+                        });
+
+                        const cardHTML = `
+                            <div class="news-card">
+                                <div class="news-content">
+                                    <div class="news-date">📅 ${pubDate}</div>
+                                    <h2 class="news-title">${item.title}</h2>
+                                    <p class="news-snippet">${cleanSnippet}</p>
+                                    <a href="${item.link}" target="_blank" class="read-more">Read Full Story</a>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += cardHTML;
+                    });
+                } else {
+                    container.innerHTML = `<p>Failed to parse dynamic data streams right now. Try again later!</p>`;
+                }
+            } catch (error) {
+                console.error("Error loading stream data:", error);
+                document.getElementById('loading').innerText = "Failed to pull live global headlines. Ensure connection stability.";
+            }
+        }
+
+        // Run function on page construction
+        fetchLiveNews();
+    </script>
+</body>
+</html>
